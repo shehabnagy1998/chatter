@@ -1,0 +1,218 @@
+@import "~bootstrap/scss/bootstrap.scss";
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+
+$color-1: #007bff;
+$color-2: #fff;
+$color-3: $color-1+#333;
+
+/* Navbar component */
+.page-navbar {
+    background-color: $color-1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 0 8px;
+
+    .page-title {
+        color: $color-2;
+        font-size: 2.2rem;
+        text-transform: capitalize;
+    }
+}
+
+/* Login component */
+.login-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    width: 100%;
+
+    .login-content {
+        display: flex;
+        flex-flow: column wrap;
+
+        h1 {
+            color: $color-3;
+            text-transform: capitalize;
+            font-size: 1.8rem;
+            margin: 0 auto;
+
+            @media (min-width: 572px) {
+                font-size: 2.8rem;
+            }
+        }
+
+        div {
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+        }
+
+        input {
+            font-size: 1.1rem;
+            border: none;
+            border-bottom: 3px solid #5aaade;
+            padding: 10px;
+            outline: none;
+            background: transparent;
+            color: #333;
+            width: 200px;
+            text-align: center;
+
+            @media (min-width: 572px) {
+                font-size: 1.8rem;
+                width: 280px;
+            }
+        }
+
+        p {
+            color: red;
+            font-weight: 500;
+            font-size: .8rem;
+
+            @media (min-width: 576px) {
+                font-size: 1rem;
+            }
+        }
+
+        button {
+            cursor: pointer;
+            width: 230px;
+            margin: 0 auto;
+            font-size: 1.3rem;
+            text-align: center;
+
+            @media (min-width: 572px) {
+                width: 350px;
+                margin: 0 auto;
+                font-size: 1.5rem;
+            }
+        }
+    }
+}
+
+/* MessageArea component  */
+.message-container {
+    display: flex;
+    flex-flow: column nowrap;
+
+    .message-area {
+        padding: 0 15px;
+        margin: 20px 0 0;
+        display: flex;
+        flex-flow: column nowrap;
+        position: relative;
+        overflow-y: auto;
+        flex-grow: 1;
+    }
+
+    .message {
+        background: linear-gradient(to top, #eee, #ccc);
+        color: #333;
+        position: relative;
+        border-radius: 0 15px 15px;
+        display: flex;
+        flex-flow: column wrap;
+        align-items: center;
+        margin-bottom: 30px;
+        margin-right: auto;
+        padding: 15px;
+        flex-shrink: 0;
+
+        &.right {
+            background: linear-gradient(to top, $color-3, $color-1);
+            color: white;
+            direction: rtl;
+            border-radius: 15px 0 15px 15px;
+
+            .message-time {
+                direction: ltr;
+                left: auto;
+                right: 20px;
+            }
+        }
+
+        .message-sender {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 0 0 10px;
+
+            @media (min-width: 576px) {
+                font-size: 1.6rem;
+            }
+        }
+
+        .message-content {
+            font-size: 1rem;
+            margin: 0;
+
+            @media (min-width: 576px) {
+                font-size: 1.1rem;
+            }
+        }
+
+        .message-time {
+            position: absolute;
+            bottom: -20px;
+            left: 20px;
+            color: #888;
+            font-size: 0.8rem;
+
+            @media (min-width: 576px) {
+                font-size: .9rem;
+            }
+        }
+    }
+
+    .person-typing {
+        font-size: 0.9rem;
+        color: #888;
+        font-style: italic;
+        margin: 5px 0 5px 15px;
+
+        @media (min-width: 576px) {
+            font-size: 1.1rem;
+        }
+    }
+
+    .message-typing {
+        background: #ccc;
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        border-radius: 15px;
+        margin: 0 10px 10px;
+        padding: 10px;
+
+        textarea {
+            border: 0;
+            outline: none;
+            font-size: 1.2rem;
+            flex-grow: 1;
+            max-height: 100px;
+            background: transparent;
+            resize: none;
+
+            @media (min-width: 576px) {
+                max-height: 150px;
+            }
+        }
+
+        button {
+            border-radius: 50%;
+            margin-left: 10px;
+            display: inline-flex;
+
+            i {
+                font-size: 1.8rem;
+
+                @media (min-width: 572px) {
+                    font-size: 2.3rem;
+                }
+            }
+        }
+    }
+}
