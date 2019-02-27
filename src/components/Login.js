@@ -1,15 +1,22 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { verifiyUser, setNickname } from '../store/actions/actions';
+import { verifiyUser, setNickname, setError } from '../store/actions/actions';
+import { compose } from 'redux'
 
 class Login extends Component {
 
     handleChange = (e) => {
-        this.props.setUser(e.target.value);
+        this.props.setNickname(e.target.value);
     }
 
     handleClick = (e) => {
-        this.props.verifiyUser(this.props.history)
+        const { nickname, setError, verifiyUser } = this.props;
+        if (this.userPattern.test(nickname)) {
+            verifiyUser(this.props.history)
+        }
+        else {
+            setError('nickname must be min 3 chars and max 10');
+        }
     }
 
     handleKeyPress = e => {
@@ -19,8 +26,11 @@ class Login extends Component {
         }
     }
 
+    userPattern = /^[A-Za-z0-9_]{3,10}$/
+
     render() {
         const { error } = this.props;
+        document.title = `Chatter`;
         return (
             <article className="login-container">
                 <section className="login-content">
@@ -42,15 +52,18 @@ class Login extends Component {
 
 const mapStateToProps = (state) => {
     return {
+        nickname: state.nickname,
         error: state.error,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setUser: (nickname) => { dispatch(setNickname(nickname)) },
-        verifiyUser: (nickname) => { dispatch(verifiyUser(nickname)) }
+        setNickname: (nickname) => { dispatch(setNickname(nickname)) },
+        verifiyUser: (nickname) => { dispatch(verifiyUser(nickname)) },
+        setError: (error) => { dispatch(setError(error)) }
     }
 }
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login)

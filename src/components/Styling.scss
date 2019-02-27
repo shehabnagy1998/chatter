@@ -5,30 +5,173 @@ $color-1: #007bff;
 $color-2: #fff;
 $color-3: $color-1+#333;
 
+/* Main container */
+.main-container {
+    position: relative;
+
+    .main-menu {
+        background: linear-gradient(to left, #ddd, #fff);
+        width: 0%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        transition: .5s all;
+        z-index: 5;
+        display: flex;
+        flex-flow: column;
+
+        &.active {
+            width: 70%;
+
+            @media screen and (min-width: 992px) {
+                width: 30%;
+            }
+        }
+
+        .sidemenu-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 10px 8px;
+            background: linear-gradient(to top, $color-3, $color-1);
+            flex-shrink: 0;
+        }
+
+        .menu-opener,
+        .logof {
+            background: transparent;
+            border: 0;
+            color: #fff;
+            outline: none;
+            flex-shrink: 0;
+
+            i {
+                font-size: 2rem
+            }
+        }
+
+        .profile {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 250px;
+            flex-flow: column wrap;
+            flex-shrink: 0;
+
+            span {
+                padding: 20px;
+                border-radius: 50%;
+                margin-bottom: 10px;
+                color: white;
+                font-size: 2rem;
+                background: radial-gradient($color-3, $color-1)
+            }
+
+            h2 {
+                font-size: 2rem;
+                color: #333;
+            }
+        }
+
+        .chat-types {
+            display: flex;
+            flex-flow: column;
+            flex-grow: 1;
+
+            .type {
+                padding: 10px 20px;
+                background: transparent;
+                font-size: 1.5rem;
+                color: #333;
+                border: 0;
+                text-align: left;
+                text-transform: capitalize;
+                font-weight: 500;
+                outline: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-shrink: 0;
+            }
+        }
+
+        .friend-list {
+            display: flex;
+            margin: 10px 20px 20px;
+            background: #fff;
+            justify-content: flex-start;
+            flex-flow: column;
+            border-radius: 0 0 10px 10px;
+            overflow-y: auto;
+
+            .friend {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                cursor: pointer;
+                transition: .5s all;
+                flex-shrink: 0;
+
+                &:hover {
+                    background: #ddd
+                }
+
+                span {
+                    padding: 10px;
+                    border-radius: 50%;
+                    color: white;
+                    font-size: .8rem;
+                    background: radial-gradient($color-3, $color-1);
+                    margin-right: 10px;
+                }
+
+                h3 {
+                    font-size: 1.3rem;
+                    color: #333;
+                }
+            }
+        }
+    }
+}
+
 /* Navbar component */
 .page-navbar {
     background-color: $color-1;
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding: 8px 0 8px;
+    padding: 10px 20px;
 
     .page-title {
         color: $color-2;
         font-size: 2.2rem;
         text-transform: capitalize;
+        margin: 0 auto;
+    }
+
+    .menu-opener {
+        background: transparent;
+        border: 0;
+        color: #fff;
+        outline: none;
+
+        i {
+            font-size: 2rem
+        }
     }
 }
 
 /* Login component */
 .login-container {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
-    width: 100%;
+    align-items: center;
+    background: linear-gradient(to right, #ddd, #fff);
+
 
     .login-content {
         display: flex;
@@ -115,7 +258,7 @@ $color-3: $color-1+#333;
     }
 
     .message {
-        background: linear-gradient(to top, #eee, #ccc);
+        background: linear-gradient(to right, #ddd, #eee);
         color: #333;
         position: relative;
         border-radius: 0 15px 15px;
@@ -154,6 +297,7 @@ $color-3: $color-1+#333;
         .message-content {
             font-size: 1rem;
             margin: 0;
+            direction: ltr;
 
             @media (min-width: 576px) {
                 font-size: 1.1rem;
@@ -181,7 +325,7 @@ $color-3: $color-1+#333;
     }
 
     .message-typing {
-        background: #ccc;
+        background: linear-gradient(to right, #ddd, #fff);
         display: flex;
         flex-shrink: 0;
         align-items: center;

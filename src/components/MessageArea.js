@@ -1,13 +1,10 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
+import Navbar from './Navbar';
 import { connect } from 'react-redux'
-import * as $ from 'jquery'
-import autosize from 'autosize';
-import { sendMessage, setMessage } from '../store/actions/actions';
-import { SEND_MESSAGE, TYPING } from '../CONSTANTS';
-import moment from 'moment';
+import MessageContainer from './MessageContainer';
+import SideMenu from './SideMenu';
 
 class MessageArea extends Component {
-
     constructor(props) {
         super(props);
         if (this.props.user.nickname === undefined) {
@@ -15,92 +12,31 @@ class MessageArea extends Component {
         }
     }
 
-    componentDidMount() {
-        setInterval(_ => {
-            this.setHeight();
-        }, 1000);
-    }
-
-    setHeight = _ => {
-        let screenHeight = $(document).innerHeight();
-        let navbarHeight = $('.page-navbar').innerHeight();
-        let requiredHeight = screenHeight - navbarHeight;
-        $('.message-container').height(requiredHeight);
-
-        autosize($('#message'));
-    }
-
-    handleChange = (e) => {
-        this.props.setMessage(e.target.value)
-        this.props.socket.emit(TYPING, this.props.user.nickname);
-    }
-
-    handleClick = (e) => {
-        let message = {
-            sender: this.props.user.nickname,
-            date: moment(new Date().toDateString()).format('D/MMM - hh:mm a'),
-            content: this.props.message
-        }
-        this.props.socket.emit(SEND_MESSAGE, message);
-        this.props.sendMessage(message);
-        this.message.value = '';
-    }
-
-    handleKeyPress = (e) => {
-        if (e.charCode === 13) {
-            e.preventDefault();
-            this.handleClick(e);
-        }
+    componentWillUnmount() {
+        clearInterval(this.inter);
     }
 
     render() {
-        const { messages, user, typing } = this.props;
+        document.title = `Chatter | ${this.props.user.nickname}`
         return (
-            <article className="message-container">
-                <section className="message-area">
-                    {
-                        messages.map((message, index) => {
-                            console.log(message);
-                            return (
-                                <div key={index} className={`message ${message.sender === user.nickname ? 'right' : ''}`}>
-                                    <h2 className="message-sender">{message.sender}</h2>
-                                    <p className="message-content">{message.content}</p>
-                                    <span className="message-time">{message.date}</span>
-                                </div>
-                            )
-                        })
-                    }
-                </section>
-                <section className="person-typing">{typing}</section>
-                <section className="message-typing">
-                    <textarea
-                        placeholder="Enter message..."
-                        onChange={this.handleChange}
-                        onKeyPress={this.handleKeyPress}
-                        ref={i => this.message = i}
-                        rows="1" dir="auto"></textarea>
-                    <button className="btn btn-primary" onClick={this.handleClick}><i className="material-icons">send</i></button>
-                </section>
-            </article>
+            <Fragment>
+                <article className="main-container">
+                    <SideMenu />
+                    <section className="main-content">
+                        <Navbar />
+                        <MessageContainer />
+                    </section>
+                </article>
+            </Fragment>
         )
     }
 }
 
 const mapStateToProps = (state) => {
     return {
-        messages: state.messages,
         user: state.user,
-        message: state.message,
-        socket: state.socket,
-        typing: state.typing
+        socket: state.socket
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        sendMessage: (val) => { dispatch(sendMessage(val)) },
-        setMessage: (val) => { dispatch(setMessage(val)) },
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MessageArea)
+export default connect(mapStateToProps)(MessageArea)

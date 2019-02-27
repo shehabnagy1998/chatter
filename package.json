@@ -22,7 +22,8 @@
     "uuid": "^3.3.2"
   },
   "scripts": {
-    "start": "concurrently --kill-others 'npm:react' 'npm:server'",
+    "start": "node src/server/index.js",
+    "devstart": "concurrently --kill-others 'npm:react' 'npm:server'",
     "react": "react-scripts start",
     "server": "nodemon src/server/index.js",
     "build": "react-scripts build",
@@ -40,6 +41,7 @@
   ],
   "devDependencies": {
     "concurrently": "^4.1.0",
-    "nodemon": "^1.18.10"
+    "nodemon": "^1.18.10",
+    "terser": "^3.16.1"
   }
 }

@@ -1,8 +1,7 @@
-import { SET_SOCKET, CREATE_USER, SET_ERROR, SET_NICKNAME, VERIFIY_USER, SEND_MESSAGE, SET_MESSAGE, SET_TYPING } from "../../CONSTANTS";
+import { SET_SOCKET, CHAT_WITH, UPDATE_USERS, CREATE_USER, SET_ERROR, SET_NICKNAME, VERIFIY_USER, SEND_MESSAGE, SET_MESSAGE, SET_TYPING } from "../../CONSTANTS";
 
 export const setSocket = val => {
     return dispatch => {
-        console.log(val);
         dispatch({ type: SET_SOCKET, val: val });
     }
 }
@@ -22,6 +21,24 @@ export const setMessage = val => {
 export const setTyping = val => {
     return dispatch => {
         dispatch({ type: SET_TYPING, val: val });
+    }
+}
+
+export const setError = val => {
+    return dispatch => {
+        dispatch({ type: SET_ERROR, val: val });
+    }
+}
+
+export const setUsers = val => {
+    return (dispatch, getState) => {
+        dispatch({ type: UPDATE_USERS, val: val })
+    }
+}
+
+export const setChatWith = val => {
+    return (dispatch, getState) => {
+        dispatch({ type: CHAT_WITH, val: val })
     }
 }
 
