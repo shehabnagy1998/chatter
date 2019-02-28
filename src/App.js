@@ -5,7 +5,7 @@ import { setSocket, setTyping, sendMessage, setUsers } from './store/actions/act
 import { Switch, Route } from 'react-router-dom'
 import Login from './components/Login';
 import MessageArea from './components/MessageArea'
-import { RECIVE_MESSAGE, RECIVE_TYPING, RECIVE_ONLINE } from './CONSTANTS';
+import { RECIVE_MESSAGE, RECIVE_TYPING, RECIVE_ONLINE, RECIVE_PMESSAGE } from './CONSTANTS';
 
 class App extends Component {
 
@@ -14,9 +14,16 @@ class App extends Component {
     const socket = io(socketURL);
     setSocket(socket);
     socket.on('connect', _ => {
+
       socket.on(RECIVE_MESSAGE, (message) => {
-        sendMessage(message)
+        sendMessage('global', message)
       });
+
+      socket.on(RECIVE_PMESSAGE, (msg) => {
+        console.log(msg);
+        sendMessage(msg.dest, msg.cont)
+      });
+
       socket.on(RECIVE_TYPING, (nickname) => {
         setTyping(nickname + ' is typing');
         setTimeout(_ => { setTyping('') }, 3000)
@@ -26,6 +33,7 @@ class App extends Component {
         console.log(onlineUsers.length);
         setUsers(onlineUsers)
       });
+
     });
   }
 
@@ -50,7 +58,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapStateToDispatch = (dispatch) => {
   return {
     setSocket: val => { dispatch(setSocket(val)) },
-    sendMessage: (val) => { dispatch(sendMessage(val)) },
+    sendMessage: (dest, cont) => { dispatch(sendMessage(dest, cont)) },
     setTyping: (val) => { dispatch(setTyping(val)) },
     setUsers: val => { dispatch(setUsers(val)) }
   }

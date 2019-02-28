@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import * as $ from 'jquery'
 import autosize from 'autosize';
 import { sendMessage, setMessage } from '../store/actions/actions';
-import { SEND_MESSAGE, TYPING } from '../CONSTANTS';
+import { SEND_MESSAGE, TYPING, SEND_PMESSAGE } from '../CONSTANTS';
 import moment from 'moment';
 
 class MessageContainer extends Component {
@@ -12,7 +12,7 @@ class MessageContainer extends Component {
         this.inter = setInterval(_ => {
             this.jMethods();
         }, 1000);
-        autosize(this.message);
+        autosize(this.messagearea);
     }
 
     jMethods = _ => {
@@ -28,15 +28,18 @@ class MessageContainer extends Component {
     }
 
     handleClick = (e) => {
-        let message = {
-            sender: this.props.user.nickname,
+        const { user, socket, sendMessage, message, chatWith } = this.props;
+        let messageTemplate = {
+            sender: user.nickname,
             date: moment(new Date().toString()).format('D/MMM - hh:mm a'),
-            content: this.props.message
+            content: message
         }
-        this.props.socket.emit(SEND_MESSAGE, message);
-        this.props.sendMessage(message);
-        this.message.value = '';
-        this.message.focus();
+        chatWith.socketID ? socket.emit(SEND_PMESSAGE, { reciver: chatWith.socketID, content: messageTemplate })
+            : socket.emit(SEND_MESSAGE, messageTemplate);
+        let dest = chatWith.nickname ? chatWith.nickname : 'global';
+        sendMessage(dest, messageTemplate);
+        this.messagearea.value = '';
+        this.messagearea.focus();
     }
 
     handleKeyPress = (e) => {
@@ -47,29 +50,33 @@ class MessageContainer extends Component {
     }
 
     render() {
-        const { messages, user, typing } = this.props;
+        const { messages, user, typing, chatWith } = this.props;
+        let messageArray = chatWith.nickname ? messages[chatWith.nickname] : messages['global'];
+        // console.log(messageArray);
         return (
             <article className="message-container">
                 <section className="message-area">
                     {
-                        messages.map((message, index) => {
-                            return (
-                                <div key={index} className={`message ${message.sender === user.nickname ? 'right' : ''}`}>
-                                    <h2 className="message-sender">{message.sender}</h2>
-                                    <p className="message-content">{message.content}</p>
-                                    <span className="message-time">{message.date}</span>
-                                </div>
-                            )
-                        })
+                        messageArray ? (
+                            messageArray.map((message, index) => {
+                                return (
+                                    <div key={index} className={`message ${message.sender === user.nickname ? 'right' : ''}`}>
+                                        <h2 className="message-sender">{message.sender}</h2>
+                                        <p className="message-content">{message.content}</p>
+                                        <span className="message-time">{message.date}</span>
+                                    </div>
+                                )
+                            })
+                        ) : null
                     }
                 </section>
-                <section className="person-typing">{typing}</section>
+                <section className="person-typing">{chatWith.nickname ? null : typing}</section>
                 <section className="message-typing">
                     <textarea
                         placeholder="Enter message..."
                         onChange={this.handleChange}
                         onKeyPress={this.handleKeyPress}
-                        ref={i => this.message = i}
+                        ref={i => this.messagearea = i}
                         rows="1" dir="auto"></textarea>
                     <button className="btn btn-primary" onClick={this.handleClick}><i className="material-icons">send</i></button>
                 </section>
@@ -85,12 +92,13 @@ const mapStateToProps = (state) => {
         message: state.message,
         socket: state.socket,
         typing: state.typing,
+        chatWith: state.chatWith,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        sendMessage: (val) => { dispatch(sendMessage(val)) },
+        sendMessage: (dest, content) => { dispatch(sendMessage(dest, content)) },
         setMessage: (val) => { dispatch(setMessage(val)) }
     }
 }

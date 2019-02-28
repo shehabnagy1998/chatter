@@ -1,6 +1,6 @@
 const io = require('./index').io;
 const uuid = require('uuid/v4');
-const { VERIFIY_USER, CREATE_USER, SEND_MESSAGE, RECIVE_MESSAGE, TYPING, RECIVE_TYPING, RECIVE_ONLINE, LOG_OFF } = require('../CONSTANTS');
+const { VERIFIY_USER, CREATE_USER, SEND_MESSAGE, RECIVE_MESSAGE, TYPING, RECIVE_TYPING, RECIVE_ONLINE, SEND_PMESSAGE, RECIVE_PMESSAGE } = require('../CONSTANTS');
 
 let connectedUsers = [];
 
@@ -44,7 +44,13 @@ module.exports = function (socket) {
     })
 
     socket.on(SEND_MESSAGE, (message) => {
+        console.log(message);
         socket.broadcast.to('community').emit(RECIVE_MESSAGE, message)
+    });
+
+    socket.on(SEND_PMESSAGE, (msg) => {
+        console.log(msg);
+        io.to(msg.reciver).emit(RECIVE_PMESSAGE, { dest: msg.content.sender, cont: msg.content })
     });
 
     socket.on(TYPING, (nickname) => {

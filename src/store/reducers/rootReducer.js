@@ -1,8 +1,8 @@
 import { CREATE_USER, SET_SOCKET, SET_ERROR, SET_NICKNAME, SEND_MESSAGE, SET_MESSAGE, SET_TYPING, UPDATE_USERS, CHAT_WITH } from "../../CONSTANTS";
 
 const initState = {
-    socketURL: window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'http://192.168.1.8:8080',
-    // socketURL: '/',
+    // socketURL: window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'http://192.168.1.8:8080',
+    socketURL: '/',
     socket: null,
     nickname: '',
     message: '',
@@ -10,7 +10,9 @@ const initState = {
     error: '',
     user: {},
     chatWith: {},
-    messages: [],
+    messages: {
+        global: []
+    },
     onlineUsers: []
 };
 
@@ -57,14 +59,16 @@ const rootReducer = (state = initState, action) => {
         case SEND_MESSAGE:
             return {
                 ...state,
-                // messages: {
-                //     ...state.messages,
-                //     [action.val.message_distenation]: action.val.message_content
-                // }
-                messages: [
+                messages: {
                     ...state.messages,
-                    action.val
-                ]
+                    [action.val.dest]: state.messages[action.val.dest] ?
+                        [...state.messages[action.val.dest], action.val.cont] :
+                        [action.val.cont]
+                }
+                // messages: [
+                //     ...state.messages,
+                //     action.val
+                // ]
             }
 
         case UPDATE_USERS:

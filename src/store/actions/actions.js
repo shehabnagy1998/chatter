@@ -57,8 +57,13 @@ export const verifiyUser = val => {
     }
 }
 
-export const sendMessage = val => {
-    return (dispatch, getState) => {
-        dispatch({ type: SEND_MESSAGE, val: val });
+export const sendMessage = (dest, cont) => {
+    return (dispatch) => {
+        dispatch({
+            type: SEND_MESSAGE, val: {
+                dest: dest,
+                cont: cont
+            }
+        });
     }
 }

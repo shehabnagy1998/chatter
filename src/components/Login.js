@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { verifiyUser, setNickname, setError } from '../store/actions/actions';
-import { compose } from 'redux'
 
 class Login extends Component {
 
