@@ -1,5 +1,6 @@
 import { SET_SOCKET, CHAT_WITH, UPDATE_USERS, CREATE_USER, SET_ERROR, SET_NICKNAME, VERIFIY_USER, SEND_MESSAGE, SET_MESSAGE, SET_TYPING } from "../../CONSTANTS";
 
+
 export const setSocket = val => {
     return dispatch => {
         dispatch({ type: SET_SOCKET, val: val });

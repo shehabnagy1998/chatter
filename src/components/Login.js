@@ -9,12 +9,11 @@ class Login extends Component {
     }
 
     handleClick = (e) => {
-        const { nickname, setError, verifiyUser } = this.props;
-        if (this.userPattern.test(nickname)) {
-            verifiyUser(this.props.history)
-        }
-        else {
-            setError('nickname must be min 3 chars and max 10');
+        const { verifiyUser, nickname, setError } = this.props;
+        if (nickname.length <= 0) {
+            setError('nickname is required');
+        } else {
+            nickname.length >= 3 ? verifiyUser(this.props.history) : setError('nickname must be min 3 chars');
         }
     }
 
@@ -24,8 +23,6 @@ class Login extends Component {
             this.handleClick(e);
         }
     }
-
-    userPattern = /^[A-Za-z0-9_]{3,10}$/
 
     render() {
         const { error } = this.props;
@@ -39,7 +36,9 @@ class Login extends Component {
                             type="text"
                             onChange={this.handleChange}
                             onKeyPress={this.handleKeyPress}
-                            placeholder="Enter nickname..." />
+                            placeholder="Enter nickname..."
+                            maxLength="10"
+                        />
                         <p>{error}</p>
                     </div>
                     <button onClick={this.handleClick} className="btn btn-primary">Log in</button>

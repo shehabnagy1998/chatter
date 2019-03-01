@@ -2,24 +2,14 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import * as $ from 'jquery'
 import autosize from 'autosize';
-import { sendMessage, setMessage } from '../store/actions/actions';
+import { sendMessage, setMessage, setChatWith } from '../store/actions/actions';
 import { SEND_MESSAGE, TYPING, SEND_PMESSAGE } from '../CONSTANTS';
 import moment from 'moment';
 
 class MessageContainer extends Component {
 
     componentDidMount() {
-        this.inter = setInterval(_ => {
-            this.jMethods();
-        }, 1000);
         autosize(this.messagearea);
-    }
-
-    jMethods = _ => {
-        let screenHeight = $(window).innerHeight();
-        let navbarHeight = $('.page-navbar').innerHeight();
-        let requiredHeight = screenHeight - navbarHeight;
-        $('.message-container').height(requiredHeight);
     }
 
     handleChange = (e) => {
@@ -27,19 +17,54 @@ class MessageContainer extends Component {
         this.props.socket.emit(TYPING, this.props.user.nickname);
     }
 
-    handleClick = (e) => {
-        const { user, socket, sendMessage, message, chatWith } = this.props;
-        let messageTemplate = {
-            sender: user.nickname,
-            date: moment(new Date().toString()).format('D/MMM - hh:mm a'),
-            content: message
+    containsObject = (obj, list) => {
+        for (let i = 0; i < list.length; i++) {
+            if (list[i] === obj) {
+                return true;
+            }
         }
-        chatWith.socketID ? socket.emit(SEND_PMESSAGE, { reciver: chatWith.socketID, content: messageTemplate })
-            : socket.emit(SEND_MESSAGE, messageTemplate);
-        let dest = chatWith.nickname ? chatWith.nickname : 'global';
-        sendMessage(dest, messageTemplate);
-        this.messagearea.value = '';
-        this.messagearea.focus();
+        return false;
+    }
+
+    handleClick = (e) => {
+        const { user, socket, sendMessage, message, chatWith, setMessage, onlineUsers, setChatWith } = this.props;
+        let dest, messageTemplate = {
+            sender: user.nickname,
+            date: moment().format('D/MMM - hh:mm a'),
+            content: message
+        };
+
+        if (message.length) {
+            if (chatWith.socketID) {
+                if (this.containsObject(chatWith, onlineUsers)) {
+                    dest = chatWith.nickname;
+                    socket.emit(SEND_PMESSAGE, { reciver: chatWith.socketID, content: messageTemplate });
+                    sendMessage(dest, messageTemplate);
+                } else {
+                    this.deletedUser = {
+                        nickname: chatWith.nickname,
+                        condition: true
+                    }
+                    this.messagearea.disabled = true;
+                    setTimeout(_ => {
+                        this.deletedUser.condition = false;
+                        this.messagearea.disabled = false;
+                        setChatWith({});
+                    }, 3000)
+                }
+
+            } else {
+                dest = 'global';
+                socket.emit(SEND_MESSAGE, messageTemplate);
+                sendMessage(dest, messageTemplate);
+            }
+            setMessage('');
+            this.messagearea.focus();
+            $('.message-area').animate({
+                scrollTop: $('.message-area')[0].scrollHeight
+            }, 500);
+            $('textarea').height('32px');
+        }
     }
 
     handleKeyPress = (e) => {
@@ -49,10 +74,14 @@ class MessageContainer extends Component {
         }
     }
 
+    deletedUser = {
+        nickname: '',
+        condition: false
+    }
+
     render() {
-        const { messages, user, typing, chatWith } = this.props;
+        const { messages, user, typing, chatWith, message } = this.props;
         let messageArray = chatWith.nickname ? messages[chatWith.nickname] : messages['global'];
-        // console.log(messageArray);
         return (
             <article className="message-container">
                 <section className="message-area">
@@ -62,22 +91,28 @@ class MessageContainer extends Component {
                                 return (
                                     <div key={index} className={`message ${message.sender === user.nickname ? 'right' : ''}`}>
                                         <h2 className="message-sender">{message.sender}</h2>
-                                        <p className="message-content">{message.content}</p>
+                                        <p className="message-content" dir="auto">{message.content}</p>
                                         <span className="message-time">{message.date}</span>
                                     </div>
                                 )
                             })
                         ) : null
                     }
+                    {
+                        this.deletedUser.condition === true ? <div className="deleted-user">{this.deletedUser.nickname} is no longer available</div> : null
+                    }
                 </section>
-                <section className="person-typing">{chatWith.nickname ? null : typing}</section>
+                <section className="person-typing">{chatWith.nickname ? (
+                    typing.split(' ')[0] === chatWith.nickname ? typing : null
+                ) : typing}</section>
                 <section className="message-typing">
                     <textarea
                         placeholder="Enter message..."
                         onChange={this.handleChange}
                         onKeyPress={this.handleKeyPress}
                         ref={i => this.messagearea = i}
-                        rows="1" dir="auto"></textarea>
+                        rows="1" dir="auto"
+                        value={message}></textarea>
                     <button className="btn btn-primary" onClick={this.handleClick}><i className="material-icons">send</i></button>
                 </section>
             </article>
@@ -93,13 +128,15 @@ const mapStateToProps = (state) => {
         socket: state.socket,
         typing: state.typing,
         chatWith: state.chatWith,
+        onlineUsers: state.onlineUsers
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         sendMessage: (dest, content) => { dispatch(sendMessage(dest, content)) },
-        setMessage: (val) => { dispatch(setMessage(val)) }
+        setMessage: (val) => { dispatch(setMessage(val)) },
+        setChatWith: (user) => { dispatch(setChatWith(user)) },
     }
 }
 

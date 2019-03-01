@@ -1,5 +1,4 @@
 const io = require('./index').io;
-const uuid = require('uuid/v4');
 const { VERIFIY_USER, CREATE_USER, SEND_MESSAGE, RECIVE_MESSAGE, TYPING, RECIVE_TYPING, RECIVE_ONLINE, SEND_PMESSAGE, RECIVE_PMESSAGE } = require('../CONSTANTS');
 
 let connectedUsers = [];
@@ -13,15 +12,12 @@ const isUser = (nickname) => {
 
 module.exports = function (socket) {
 
-    socket.join('community');
-
     socket.on(VERIFIY_USER, (nickname, callback) => {
         if (isUser(nickname)) {
             callback({ isUser: true, user: null })
         } else {
             callback({
                 isUser: false, user: {
-                    id: uuid(),
                     nickname,
                     userLetter: nickname.substring(0, 2).toUpperCase(),
                     socketID: socket.id
@@ -35,17 +31,17 @@ module.exports = function (socket) {
             ...connectedUsers,
             user
         ];
-        socket.to('community').emit(RECIVE_ONLINE, connectedUsers);
+        io.emit(RECIVE_ONLINE, connectedUsers);
     });
 
     socket.on('disconnect', _ => {
         connectedUsers = connectedUsers.filter(user => user.socketID !== socket.id);
-        socket.to('community').emit(RECIVE_ONLINE, connectedUsers);
+        io.emit(RECIVE_ONLINE, connectedUsers);
     })
 
     socket.on(SEND_MESSAGE, (message) => {
         console.log(message);
-        socket.broadcast.to('community').emit(RECIVE_MESSAGE, message)
+        socket.broadcast.emit(RECIVE_MESSAGE, message)
     });
 
     socket.on(SEND_PMESSAGE, (msg) => {
@@ -54,6 +50,6 @@ module.exports = function (socket) {
     });
 
     socket.on(TYPING, (nickname) => {
-        socket.broadcast.to('community').emit(RECIVE_TYPING, nickname)
+        socket.broadcast.emit(RECIVE_TYPING, nickname)
     });
 }

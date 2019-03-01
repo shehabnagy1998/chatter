@@ -20,9 +20,9 @@ class SideMenu extends Component {
     }
 
     handleLogout = (e) => {
-        const { socket, user } = this.props;
-        socket.emit('disconnect', user);
-        this.props.history.push('/');
+        const { socket } = this.props;
+        socket.disconnect();
+        window.location.href = '/';
     }
 
     handleGlobalClick = _ => {

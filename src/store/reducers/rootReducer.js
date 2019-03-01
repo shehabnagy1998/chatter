@@ -65,10 +65,6 @@ const rootReducer = (state = initState, action) => {
                         [...state.messages[action.val.dest], action.val.cont] :
                         [action.val.cont]
                 }
-                // messages: [
-                //     ...state.messages,
-                //     action.val
-                // ]
             }
 
         case UPDATE_USERS:

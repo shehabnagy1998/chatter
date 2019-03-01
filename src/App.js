@@ -6,6 +6,7 @@ import { Switch, Route } from 'react-router-dom'
 import Login from './components/Login';
 import MessageArea from './components/MessageArea'
 import { RECIVE_MESSAGE, RECIVE_TYPING, RECIVE_ONLINE, RECIVE_PMESSAGE } from './CONSTANTS';
+import * as $ from 'jquery'
 
 class App extends Component {
 
@@ -16,17 +17,22 @@ class App extends Component {
     socket.on('connect', _ => {
 
       socket.on(RECIVE_MESSAGE, (message) => {
-        sendMessage('global', message)
+        sendMessage('global', message);
+        $('.message-area').animate({
+          scrollTop: $('.message-area')[0].scrollHeight
+        }, 500);
       });
 
       socket.on(RECIVE_PMESSAGE, (msg) => {
-        console.log(msg);
-        sendMessage(msg.dest, msg.cont)
+        sendMessage(msg.dest, msg.cont);
+        $('.message-area').animate({
+          scrollTop: $('.message-area')[0].scrollHeight
+        }, 500);
       });
 
       socket.on(RECIVE_TYPING, (nickname) => {
         setTyping(nickname + ' is typing');
-        setTimeout(_ => { setTyping('') }, 3000)
+        setTimeout(_ => { setTyping('') }, 2000)
       });
 
       socket.on(RECIVE_ONLINE, (onlineUsers) => {
