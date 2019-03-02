@@ -6,6 +6,7 @@ import { sendMessage, setMessage, setChatWith } from '../store/actions/actions';
 import { SEND_MESSAGE, TYPING, SEND_PMESSAGE } from '../CONSTANTS';
 import moment from 'moment';
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
+import notification from '../assets/sound.ogg'
 
 class MessageContainer extends Component {
 
@@ -28,7 +29,7 @@ class MessageContainer extends Component {
     }
 
     handleClick = (e) => {
-        const { user, socket, sendMessage, message, chatWith, setMessage, onlineUsers, setChatWith } = this.props;
+        const { user, socket, sendMessage, message, chatWith, setMessage, onlineUsers, setChatWith, sound } = this.props;
         let dest,
             newMessage = message.trim(),
             messageTemplate = {
@@ -62,6 +63,9 @@ class MessageContainer extends Component {
             }
             setMessage('');
             this.messagearea.focus();
+            if (sound === true) {
+                new Audio(notification).play()
+            }
             $('.message-area').animate({
                 scrollTop: $('.message-area')[0].scrollHeight
             }, 500);
@@ -138,7 +142,8 @@ const mapStateToProps = (state) => {
         socket: state.socket,
         typing: state.typing,
         chatWith: state.chatWith,
-        onlineUsers: state.onlineUsers
+        onlineUsers: state.onlineUsers,
+        sound: state.sound
     }
 }
 

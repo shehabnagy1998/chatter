@@ -206,9 +206,9 @@ $color-3: $color-1+#333;
             display: flex;
             flex-flow: column;
             flex-grow: 1;
+            padding: 10px 20px;
 
             .type {
-                padding: 10px 20px;
                 background: transparent;
                 font-size: 1.5rem;
                 color: #333;

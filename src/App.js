@@ -8,6 +8,7 @@ import MessageArea from './components/MessageArea'
 import { RECIVE_MESSAGE, RECIVE_TYPING, RECIVE_ONLINE, RECIVE_PMESSAGE } from './CONSTANTS';
 import * as $ from 'jquery'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
+import notification from './assets/sound.ogg'
 
 class App extends Component {
 
@@ -17,18 +18,14 @@ class App extends Component {
     setSocket(socket);
     socket.on('connect', _ => {
 
-      socket.on(RECIVE_MESSAGE, (message) => {
-        sendMessage('global', message);
-        $('.message-area').animate({
-          scrollTop: $('.message-area')[0] ? $('.message-area')[0].scrollHeight : 0
-        }, 500);
+      socket.on(RECIVE_MESSAGE, (msg) => {
+        sendMessage('global', msg);
+        this.recivingMsg();
       });
 
       socket.on(RECIVE_PMESSAGE, (msg) => {
         sendMessage(msg.dest, msg.cont);
-        $('.message-area').animate({
-          scrollTop: $('.message-area')[0].scrollHeight
-        }, 500);
+        this.recivingMsg();
       });
 
       socket.on(RECIVE_TYPING, (nickname) => {
@@ -42,6 +39,19 @@ class App extends Component {
       });
 
     });
+  }
+
+  recivingMsg = _ => {
+    const { sound, vibration, user } = this.props;
+    $('.message-area').animate({
+      scrollTop: $('.message-area')[0] ? $('.message-area')[0].scrollHeight : 0
+    }, 500);
+    if (sound === true && user.nickname) {
+      new Audio(notification).play()
+    }
+    if (vibration === true && user.nickname) {
+      navigator.vibrate(200);
+    }
   }
 
   render() {
@@ -65,7 +75,10 @@ class App extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    socketURL: state.socketURL
+    socketURL: state.socketURL,
+    sound: state.sound,
+    vibration: state.vibration,
+    user: state.user
   }
 }
 

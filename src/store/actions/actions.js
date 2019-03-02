@@ -1,9 +1,34 @@
-import { SET_SOCKET, CHAT_WITH, UPDATE_USERS, CREATE_USER, SET_ERROR, SET_NICKNAME, VERIFIY_USER, SEND_MESSAGE, SET_MESSAGE, SET_TYPING } from "../../CONSTANTS";
+import {
+    SET_SOCKET,
+    CHAT_WITH,
+    UPDATE_USERS,
+    CREATE_USER,
+    SET_ERROR,
+    SET_NICKNAME,
+    VERIFIY_USER,
+    SEND_MESSAGE,
+    SET_MESSAGE,
+    SET_TYPING,
+    SET_SOUND,
+    SET_VIBRATION
+} from "../../CONSTANTS";
 
 
 export const setSocket = val => {
     return dispatch => {
         dispatch({ type: SET_SOCKET, val: val });
+    }
+}
+
+export const setVibration = val => {
+    return dispatch => {
+        dispatch({ type: SET_VIBRATION, val: val });
+    }
+}
+
+export const setSound = val => {
+    return dispatch => {
+        dispatch({ type: SET_SOUND, val: val });
     }
 }
 

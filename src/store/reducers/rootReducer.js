@@ -1,4 +1,16 @@
-import { CREATE_USER, SET_SOCKET, SET_ERROR, SET_NICKNAME, SEND_MESSAGE, SET_MESSAGE, SET_TYPING, UPDATE_USERS, CHAT_WITH } from "../../CONSTANTS";
+import {
+    CREATE_USER,
+    SET_SOCKET,
+    SET_ERROR,
+    SET_NICKNAME,
+    SEND_MESSAGE,
+    SET_MESSAGE,
+    SET_TYPING,
+    UPDATE_USERS,
+    CHAT_WITH,
+    SET_SOUND,
+    SET_VIBRATION
+} from "../../CONSTANTS";
 
 const initState = {
     // socketURL: window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'http://192.168.1.2:8080',
@@ -8,6 +20,8 @@ const initState = {
     message: '',
     typing: '',
     error: '',
+    vibration: true,
+    sound: true,
     user: {},
     chatWith: {},
     messages: {
@@ -23,6 +37,17 @@ const rootReducer = (state = initState, action) => {
             return {
                 ...state,
                 socket: action.val
+            }
+
+        case SET_VIBRATION:
+            return {
+                ...state,
+                vibration: action.val
+            }
+        case SET_SOUND:
+            return {
+                ...state,
+                sound: action.val
             }
 
         case SET_NICKNAME:
