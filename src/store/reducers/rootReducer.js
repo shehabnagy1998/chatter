@@ -1,7 +1,7 @@
 import { CREATE_USER, SET_SOCKET, SET_ERROR, SET_NICKNAME, SEND_MESSAGE, SET_MESSAGE, SET_TYPING, UPDATE_USERS, CHAT_WITH } from "../../CONSTANTS";
 
 const initState = {
-    // socketURL: window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'http://192.168.1.8:8080',
+    // socketURL: window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'http://192.168.1.2:8080',
     socketURL: '/',
     socket: null,
     nickname: '',

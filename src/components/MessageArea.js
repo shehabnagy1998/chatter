@@ -17,7 +17,8 @@ class MessageArea extends Component {
     }
 
     render() {
-        document.title = `Chatter | ${this.props.user.nickname}`
+        let title = this.props.user.nickname ? `Chatter | ${this.props.user.nickname}` : `Chatter`;
+        document.title = title;
         return (
             <Fragment>
                 <article className="main-container">

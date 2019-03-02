@@ -7,6 +7,7 @@ import Login from './components/Login';
 import MessageArea from './components/MessageArea'
 import { RECIVE_MESSAGE, RECIVE_TYPING, RECIVE_ONLINE, RECIVE_PMESSAGE } from './CONSTANTS';
 import * as $ from 'jquery'
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 class App extends Component {
 
@@ -19,7 +20,7 @@ class App extends Component {
       socket.on(RECIVE_MESSAGE, (message) => {
         sendMessage('global', message);
         $('.message-area').animate({
-          scrollTop: $('.message-area')[0].scrollHeight
+          scrollTop: $('.message-area')[0] ? $('.message-area')[0].scrollHeight : 0
         }, 500);
       });
 
@@ -45,12 +46,19 @@ class App extends Component {
 
   render() {
     return (
-      <article className="App">
-        <Switch>
-          <Route path="/" exact component={Login}></Route>
-          <Route path="/:nickname" component={MessageArea}></Route>
-        </Switch>
-      </article>
+      <Route render={({ location }) => (
+        <TransitionGroup>
+          <CSSTransition
+            key={location.key}
+            timeout={1000}
+            classNames='fade'>
+            <Switch location={location}>
+              <Route path="/" exact component={Login}></Route>
+              <Route path="/:nickname" component={MessageArea}></Route>
+            </Switch>
+          </CSSTransition>
+        </TransitionGroup>
+      )} />
     );
   }
 }

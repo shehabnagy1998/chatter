@@ -9,11 +9,19 @@ class Login extends Component {
     }
 
     handleClick = (e) => {
-        const { verifiyUser, nickname, setError } = this.props;
-        if (nickname.length <= 0) {
+        const { verifiyUser, nickname, setError, setNickname } = this.props;
+        let newNick = nickname.replace(/\s/g, '');
+        if (newNick.length <= 0) {
             setError('nickname is required');
+            this.input.focus();
         } else {
-            nickname.length >= 3 ? verifiyUser(this.props.history) : setError('nickname must be min 3 chars');
+            if (newNick.length >= 3) {
+                setNickname(newNick);
+                verifiyUser(this.props.history);
+            } else {
+                setError('nickname must be min 3 chars');
+                this.input.focus();
+            }
         }
     }
 
@@ -26,7 +34,6 @@ class Login extends Component {
 
     render() {
         const { error } = this.props;
-        document.title = `Chatter`;
         return (
             <article className="login-container">
                 <section className="login-content">
@@ -38,6 +45,7 @@ class Login extends Component {
                             onKeyPress={this.handleKeyPress}
                             placeholder="Enter nickname..."
                             maxLength="10"
+                            ref={i => this.input = i}
                         />
                         <p>{error}</p>
                     </div>

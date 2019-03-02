@@ -45,7 +45,6 @@ module.exports = function (socket) {
     });
 
     socket.on(SEND_PMESSAGE, (msg) => {
-        console.log(msg);
         io.to(msg.reciver).emit(RECIVE_PMESSAGE, { dest: msg.content.sender, cont: msg.content })
     });
 

@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { setChatWith } from '../store/actions/actions';
 import * as $ from 'jquery'
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 const FriendList = ({ onlineUsers, user, setChatWith }) => {
 
@@ -11,17 +12,22 @@ const FriendList = ({ onlineUsers, user, setChatWith }) => {
     }
 
     return (
-        <section className="friend-list">
+        <TransitionGroup className="friend-list">
             {onlineUsers.map((friend, index) => {
                 return user.nickname !== friend.nickname ? (
-                    <div key={index} className="friend" onClick={_ => handleClick(friend)}>
-                        <span>{friend.userLetter}</span>
-                        <h3>{friend.nickname}</h3>
-                    </div>
+                    <CSSTransition
+                        key={index}
+                        timeout={1000}
+                        classNames='fade'>
+                        <div key={index} className="friend" onClick={_ => handleClick(friend)}>
+                            <div>{friend.userLetter}</div>
+                            <div>{friend.nickname}</div>
+                        </div>
+                    </CSSTransition>
                 ) : ''
             })
             }
-        </section>
+        </TransitionGroup>
     )
 }
 

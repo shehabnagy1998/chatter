@@ -5,6 +5,7 @@ import autosize from 'autosize';
 import { sendMessage, setMessage, setChatWith } from '../store/actions/actions';
 import { SEND_MESSAGE, TYPING, SEND_PMESSAGE } from '../CONSTANTS';
 import moment from 'moment';
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 class MessageContainer extends Component {
 
@@ -28,13 +29,14 @@ class MessageContainer extends Component {
 
     handleClick = (e) => {
         const { user, socket, sendMessage, message, chatWith, setMessage, onlineUsers, setChatWith } = this.props;
-        let dest, messageTemplate = {
-            sender: user.nickname,
-            date: moment().format('D/MMM - hh:mm a'),
-            content: message
-        };
-
-        if (message.length) {
+        let dest,
+            newMessage = message.trim(),
+            messageTemplate = {
+                sender: user.nickname,
+                date: moment().format('D/MMM - hh:mm a'),
+                content: newMessage
+            };
+        if (newMessage !== '') {
             if (chatWith.socketID) {
                 if (this.containsObject(chatWith, onlineUsers)) {
                     dest = chatWith.nickname;
@@ -64,6 +66,9 @@ class MessageContainer extends Component {
                 scrollTop: $('.message-area')[0].scrollHeight
             }, 500);
             $('textarea').height('32px');
+        } else {
+            setMessage('');
+            this.messagearea.focus();
         }
     }
 
@@ -84,16 +89,21 @@ class MessageContainer extends Component {
         let messageArray = chatWith.nickname ? messages[chatWith.nickname] : messages['global'];
         return (
             <article className="message-container">
-                <section className="message-area">
+                <TransitionGroup className="message-area">
                     {
                         messageArray ? (
                             messageArray.map((message, index) => {
                                 return (
-                                    <div key={index} className={`message ${message.sender === user.nickname ? 'right' : ''}`}>
-                                        <h2 className="message-sender">{message.sender}</h2>
-                                        <p className="message-content" dir="auto">{message.content}</p>
-                                        <span className="message-time">{message.date}</span>
-                                    </div>
+                                    <CSSTransition
+                                        timeout={500}
+                                        key={index}
+                                        classNames="msg">
+                                        <div key={index} className={`message ${message.sender === user.nickname ? 'right' : ''}`}>
+                                            <h2 className="message-sender">{message.sender}</h2>
+                                            <p className="message-content" dir="auto">{message.content}</p>
+                                            <span className="message-time">{message.date}</span>
+                                        </div>
+                                    </CSSTransition>
                                 )
                             })
                         ) : null
@@ -101,7 +111,7 @@ class MessageContainer extends Component {
                     {
                         this.deletedUser.condition === true ? <div className="deleted-user">{this.deletedUser.nickname} is no longer available</div> : null
                     }
-                </section>
+                </TransitionGroup>
                 <section className="person-typing">{chatWith.nickname ? (
                     typing.split(' ')[0] === chatWith.nickname ? typing : null
                 ) : typing}</section>
