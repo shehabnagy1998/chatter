@@ -10,6 +10,10 @@ const socektManger = require('./socketManger');
 app.use(express.static(path.join(__dirname, '../../build')));
 app.use(cors());
 
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../build/index.html'))
+})
+
 io.on('connection', socektManger);
 
 http.listen(PORT, _ => { console.log(`listen on port ${PORT}`); })
